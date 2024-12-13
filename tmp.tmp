@@ -1,0 +1,101 @@
+## Pruebas END-TO-END (e2e) con CYPRESS
+
+### Paso 1: Instalar Cypress
+
+Para instalar Cypress ejecutar en una consola el siguiente comando:
+
+`npm i cypress --save-dev`
+
+## Paso 2: Modificar "tsconfig.json"
+
+Agregar en tsconfig.json el valor **"jshintConfig"** debajo de **"description"**, de modo que quede así:
+
+  **"description": "An Ionic project",**  <span style="color:red; font-weight:bold">
+  "jshintConfig": {
+    "esversion": 6
+  }
+  </span>
+
+## Paso 3: Modificar **"package.json"**
+
+Agregar en package.json el valor **"types": ["cypress"],** debajo de la lista **"lib"**, de modo que quede así: 
+
+**"lib": ["es2018", "dom"],**   <span style="color:red; font-weight:bold">
+    "types": ["cypress"],
+    </span>
+
+## Poner nombres a los controles gráficos
+
+Antes de ejecutar las pruebas se deben poner nombres a los controles gráficos usando el **atributo "id"**, por ejemplo:
+
+En foro.component.html:
+
+  <ion-input <span style="color:red; font-weight:bold">id="titulo"</span> [(ngModel)]="publicacion.titulo" label="Título" labelPlacement="floating"></ion-input>
+  <ion-textarea <span style="color:red; font-weight:bold">id="contenido"</span> [(ngModel)]="publicacion.contenido" label="Contenido" labelPlacement="floating"></ion-textarea>
+  <ion-button <span style="color:red; font-weight:bold">id="limpiar"</span> (click)="limpiarPublicacion()">Limpiar</ion-button>
+  <ion-button <span style="color:red; font-weight:bold">id="guardar"</span> (click)="guardarPublicacion()">Guardar</ion-button>
+
+En qr.component.html:
+
+`<h1 id="saludo">`
+
+En ingreso.page.html
+
+<ion-input <span style="color:red; font-weight:bold">id="correo"</span> [(ngModel)]="correo" type="text" label="Correo" labelPlacement="floating"></ion-input>
+<ion-input <span style="color:red; font-weight:bold">id="password"</span> [(ngModel)]="password" type="password" label="Contraseña" labelPlacement="floating"></ion-input>
+
+## Paso 5: Configurar archivo "cypress.config.ts"
+
+Configurar archivo **"cypress.config.ts"** indicando la URL de nuestra aplicación:
+
+import { defineConfig } from 'cypress'
+
+export default defineConfig({
+  
+  e2e: {
+    'baseUrl': 'http://localhost:8100'
+  },
+  
+  
+  component: {
+    devServer: {
+      framework: 'angular',
+      bundler: 'webpack',
+    },
+    specPattern: '**/*.cy.ts'
+  }
+  
+})
+
+## Paso 6: Ejecutar las pruebas en Cypress
+
+Para ejecutar las pruebas en Cypress usar el comando:
+
+`npx cypress open`
+
+
+
+
+
+
+PROBLEMAS CONOCIDOS DE CYPRESS
+------------------------------
+
+1) ERROR: Su proyecto no contiene un archivo de soporte predeterminado. Esperamos que exista un archivo que coincida con cypress\support\e2e.{js,jsx,ts,tsx}
+
+URL que explica el error: https://github.com/cypress-io/cypress/issues/22040
+
+Solución: En cypress.config.ts agregar supportFile de la siguiente forma:
+
+  e2e: {
+    'baseUrl': 'http://localhost:8100'
+    'supportFile': false
+  },
+
+2) ERROR:  Option 'sourceMap' cannot be specified with option 'inlineSourceMap'
+
+URL que explica el error: https://stackoverflow.com/questions/42041056/nativescript-typescript-error-error-ts5053-option-sourcemap-cannot-be-spe
+
+Solución: En tsconfig.json cambiar sourceMap por false:
+
+"sourceMap": false,
